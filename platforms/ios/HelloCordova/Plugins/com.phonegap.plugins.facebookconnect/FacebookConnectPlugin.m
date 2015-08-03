@@ -27,6 +27,7 @@
     self = (FacebookConnectPlugin *)[super initWithWebView:theWebView];
     self.userid = @"";
     
+    
     [FBSession openActiveSessionWithReadPermissions:nil
                                        allowLoginUI:NO
                                   completionHandler:^(FBSession *session,
@@ -46,6 +47,8 @@
                                                  name:CDVPluginHandleOpenURLNotification object:nil];
     return self;
 }
+
+
 
 - (void)openURL:(NSNotification *)notification {
     // NSLog(@"handle url: %@", [notification object]);
@@ -172,6 +175,27 @@
         }
     }
     return YES;
+}
+
+- (void)setAppSettings:(CDVInvokedUrlCommand *)command {
+    
+    
+    NSString *newAppId = [command.arguments objectAtIndex:0];
+    NSString *newAppSuffix = [command.arguments objectAtIndex:1];
+    
+    FBSession *session = [[FBSession alloc] initWithAppID:newAppId
+                                          permissions:nil
+                                          defaultAudience:FBSessionDefaultAudienceEveryone
+                                          urlSchemeSuffix:newAppSuffix
+                                          tokenCacheStrategy:nil];
+    [FBSettings setDefaultAppID: newAppId];
+    [FBSession setActiveSession:session];
+    [FBSettings setDefaultUrlSchemeSuffix: newAppSuffix];
+    
+    CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
+                                                  messageAsDictionary:[self responseObject]];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    
 }
 
 - (void)getLoginStatus:(CDVInvokedUrlCommand *)command {

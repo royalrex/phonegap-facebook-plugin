@@ -181,7 +181,9 @@ if (cordova.platformId == "browser") {
     var exec = require("cordova/exec");
 
     var facebookConnectPlugin = {
-
+        setAppSettings: function(appId, appSuffix, s, f) {
+            exec(s, f, "FacebookConnectPlugin", "setAppSettings", [appId, appSuffix]);
+        },
         getLoginStatus: function (s, f) {
             exec(s, f, "FacebookConnectPlugin", "getLoginStatus", []);
         },
